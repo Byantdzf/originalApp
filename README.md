@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img width="200" src="http://images.ufutx.com/201810/18/4a9e97860841c291869fadc4574a9181.png">
+  <img width="200" src="http://images.ufutx.com/201810/18/0e1a83b8ba03e89b3c4da64aed06a58b.png">
 </p>
 
 ## 快速上手
@@ -11,7 +11,7 @@
 [查阅](https://github.com/Chaunjie/kai-ui)
 #### 预览小程序
 <p>
- <img width="150" src="http://images.ufutx.com/201810/18/4a9e97860841c291869fadc4574a9181.png"/>
+ <img width="150" src="http://images.ufutx.com/201810/18/0e1a83b8ba03e89b3c4da64aed06a58b.png"/>
 </p>
 
 ### 如何使用
