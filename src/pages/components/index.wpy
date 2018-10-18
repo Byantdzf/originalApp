@@ -169,7 +169,7 @@ export default class Index extends wepy.page {
         list: [
           {
             title: 'Uploader 上传',
-            
+
             link: 'uploader'
           },
           {

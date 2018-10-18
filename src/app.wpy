@@ -13,48 +13,94 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
+import {service} from './config.js'
+
+var ga = require('./ga.js')
+var GoogleAnalytics = ga.GoogleAnalytics
+var HitBuilders = ga.HitBuilders
 
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index',
-      'pages/helper',
-      'pages/switch',
-      'pages/radio',
-      'pages/actionsheet',
-      'pages/button',
-      'pages/cell',
-      'pages/checkbox',
-      'pages/grid',
-      'pages/icon',
-      'pages/layout',
-      'pages/noticebar',
-      'pages/loadmore',
-      'pages/loading',
-      'pages/panel',
-      'pages/popup',
-      'pages/select',
-      'pages/tab',
-      'pages/tag',
-      'pages/uploader',
-      'pages/numberpicker',
-      'pages/dialog',
-      'pages/toast',
-      'pages/toptips',
-      'pages/input',
-      'pages/searchbar',
-      'pages/step',
-      'pages/folder',
-      'pages/slider',
-      'pages/swipeout',
-      'pages/rate'
+      'pages/tabBar/index'
+      ],
+    'subPackages':[
+      {
+        'root': 'pages/components',
+        'pages': [
+          'index',
+          'helper',
+          'switch',
+          'radio',
+          'actionsheet',
+          'button',
+          'cell',
+          'checkbox',
+          'grid',
+          'icon',
+          'layout',
+          'noticebar',
+          'loadmore',
+          'loading',
+          'panel',
+          'popup',
+          'select',
+          'tab',
+          'tag',
+          'uploader',
+          'numberpicker',
+          'dialog',
+          'toast',
+          'toptips',
+          'input',
+          'searchbar',
+          'step',
+          'folder',
+          'slider',
+          'swipeout',
+          'rate'
+        ]
+      }
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
-    }
+    },
+    tabBar: {
+      color: '#707070',
+      selectedColor: '#005b9e',
+      backgroundColor: '#fff',
+      borderStyle: 'black',
+//        position: 'top',
+      list: [{
+        pagePath: 'pages/tabBar/index',
+        selectedIconPath: './images/tabbars/circle_active.png',
+        iconPath: './images/tabbars/circle.png',
+        text: '名片'
+      }, {
+        pagePath: 'pages/tabBar/index',
+        selectedIconPath: './images/tabbars/circle_active.png',
+        iconPath: './images/tabbars/circle.png',
+        text: '名片库'
+      }, {
+        pagePath: 'pages/tabBar/index',
+        selectedIconPath: './images/tabbars/circle_active.png',
+        iconPath: './images/tabbars/circle.png',
+        text: '通讯录'
+      }, {
+        pagePath: 'pages/tabBar/index',
+        selectedIconPath: './images/tabbars/circle_active.png',
+        iconPath: './images/tabbars/circle.png',
+        text: '我的'
+      }]
+    },
+    networkTimeout: {
+      request: 5000,
+      downloadFile: 10000
+    },
+    debug: true
   }
 
   globalData = {
@@ -82,18 +128,38 @@ export default class extends wepy.app {
     const data = await this.sleep(3)
     console.log(data)
   }
-
+  // Google analytics
+  getTracker(name, text) {
+    if (!this.globalData.tracker) {
+      // 初始化GoogleAnalytics Tracker
+      this.globalData.tracker = GoogleAnalytics.getInstance(this)
+        .setAppName('福邦商圈')
+        .setAppVersion('v0.1')
+        .newTracker('UA-109097480-11')
+    }
+    var t = this.globalData.tracker
+    t.setScreenName(text)
+    t.send(new HitBuilders.ScreenViewBuilder().build())
+    t.send(new HitBuilders.ExceptionBuilder()
+      .setDescription(wx.getStorageSync('message'))
+      .setFatal(false).build())
+    t.set('&uid', '12345')
+    t.send(new HitBuilders.EventBuilder()
+      .setCategory('UX')
+      .setAction('User Sign In')
+      .build())
+  }
   getUserInfo(cb) {
     const that = this
     if (this.globalData.userInfo) {
       return this.globalData.userInfo
     }
-    wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
-      }
-    })
+//    wepy.getUserInfo({
+//      success (res) {
+//        that.globalData.userInfo = res.userInfo
+//        cb && cb(res.userInfo)
+//      }
+//    })
   }
 }
 </script>

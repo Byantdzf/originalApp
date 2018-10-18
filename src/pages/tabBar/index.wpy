@@ -1,0 +1,138 @@
+<template>
+  <view>完美带ui小程序框架</view>
+  <navigator url="/pages/components/index" hover-class="navigator-hover">跳转到UI新页面</navigator>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import user from '../../mixins/user'
+  import ShareMessage from '../../mixins/ShareMessage'
+  import { service } from '../../config.js'
+
+  export default class pageUser extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '我的',
+      enablePullDownRefresh: true
+    }
+
+    components = {
+    }
+    data = {
+      user: {}
+    }
+
+    computed = {
+      nickName() {
+        return (user && user.wechat && user.wechat.nickname) ? user.wechat.nickname : '未授权用户'
+      }
+    }
+
+    onShow() {
+      // 初始化页面数据
+      this.initData()
+      this.$parent.getTracker(this.$root.$name, this.config.navigationBarTitleText)
+    }
+
+    onShareAppMessage(res) {
+      return this.$parent.onShareAppMessage(this.config.navigationBarTitleText)
+    }
+
+    onLoad() {
+
+    }
+
+    onPullDownRefresh() {
+//      this.initPageData()
+    }
+
+    // 初始化页面数据
+    initData() {
+      this.$get({url: service.user}, {
+        success: ({code, data}) => {
+          this.user = data
+          this.$apply()
+          // if (this.user.new_notice_count != 0) {
+          //   wx.showTabBarRedDot({
+          //     index: 3
+          //   })
+          // } else {
+          //   wx.hideTabBarRedDot({
+          //     index: 3
+          //   })
+          // }
+          // wx.setStorageSync('type', data.type)
+        }
+      })
+    }
+
+    methods = {
+      gotofriends(item) {
+        let url = ''
+        if (item.type == 'single') {
+          url = '/pages/goods/information?id=' + item.id
+        } else {
+          url = '/pages/goods/introducer?id=' + item.id
+        }
+        wx.navigateTo({url: url})
+      },
+      goto(url) {
+        wx.navigateTo({url: url})
+      },
+      gotoVipSet() {
+        let url = ''
+        if (user.rank_id == 0) {
+          return wx.showModal({
+            title: '提示',
+            content: '需要先成为VIP会员！',
+            confirmText: '去升级',
+            success: function(res) {
+              if (res.confirm) {
+//                wx.navigateTo({url: url})
+                wx.redirectTo({url: '/pages/users/upgradingVIP'})
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
+            }
+          })
+        }
+        if (user.is_profile == 0) {
+          if (user.type == 'single') {
+            url = '/pages/users/unmarri'
+          } else {
+            url = '/pages/users/intro'
+          }
+        } else {
+          url = '/pages/users/vipSetting'
+        }
+        wx.navigateTo({url: url})
+      },
+      gotoUser(type) {
+        let url = ''
+        if (type == 'single') {
+          url = '/pages/users/unmarri'
+        } else {
+          url = '/pages/users/intro'
+        }
+        wx.navigateTo({url: url})
+      }
+    }
+
+  }
+</script>
+
+<style lang="less">
+  /*@import "../../../styles/custom/reset.less";*/
+  /*@import "../../../styles/custom/fn.less";*/
+page{
+  background: #ececec;
+}
+.weui-cells {
+  /*position: inherit;*/
+  /*box-shadow: 1rpx 1rpx 12rpx #dedede;*/
+  /*margin-top: 12rpx;*/
+}
+
+</style>
