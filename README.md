@@ -11,7 +11,7 @@
 [查阅](https://github.com/Chaunjie/kai-ui)
 #### 预览小程序
 <p>
- <img width="150" src="http://images.ufutx.com/201810/18/0e1a83b8ba03e89b3c4da64aed06a58b.png"/>
+ <img width="150" src="http://images.ufutx.com/201810/18/fd867b304aaa7a473a70f3d365fa8a0a.jpeg"/>
 </p>
 
 ### 如何使用
