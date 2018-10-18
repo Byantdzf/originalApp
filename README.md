@@ -7,11 +7,11 @@
 
 ### 使用之前
 
-使用 kai-ui 前，务必要先阅读[wepy自定义组件开发](https://tencent.github.io/wepy/)。
-
+使用前，务必要先阅读[wepy自定义组件开发](https://tencent.github.io/wepy/)。
+[查阅](https://github.com/Chaunjie/kai-ui)
 #### 预览小程序
 <p>
- <img width="150" src="http://images.kaishiba.com/kai.jpg"/>
+ <img width="150" src="http://images.ufutx.com/201810/18/4a9e97860841c291869fadc4574a9181.png"/>
 </p>
 
 ### 如何使用
