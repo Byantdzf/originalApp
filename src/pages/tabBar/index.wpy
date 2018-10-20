@@ -1,6 +1,16 @@
 <template>
   <view>完美带ui小程序框架</view>
   <navigator url="/pages/components/index" hover-class="navigator-hover">跳转到UI新页面</navigator>
+  <view class="kai-content">
+    <view class="padding-10" style="margin-top:40px;">
+       <button class="btn btn-success" catchtap="showActionSheet(0)">从顶部弹出popup</button>
+      <button class="btn btn-kai" catchtap="showActionSheet(1)">从底部出AsadctionSheet</button>
+    </view>
+    <repeat for="{{asData}}" index="i" item="item" key="row-{{index}}">
+
+      <actionsheet :asData.sync="item"></actionsheet>
+    </repeat>
+  </view>
 </template>
 
 <script>
@@ -10,18 +20,73 @@
   import user from '../../mixins/user'
   import ShareMessage from '../../mixins/ShareMessage'
   import { service } from '../../config.js'
+  import actionsheet from '@/components/actionsheet/index'
 
   export default class pageUser extends wepy.page {
     mixins = [base, http, user, ShareMessage]
     config = {
-      navigationBarTitleText: '我的',
+      navigationBarTitleText: '名片',
       enablePullDownRefresh: true
     }
 
     components = {
+      actionsheet: actionsheet
     }
     data = {
-      user: {}
+      user: {},
+      asData: [
+        {
+          itemList: [{
+            class: 'list bold',
+            value: '江南忆',
+            event: '',
+            slotid: 'slotid0'
+            // ,slot: '<view class="kai-iconfont kai-icon-success">alot1</view><view class="kai-iconfont kai-icon-delete">alot11</view>'
+          },
+            {
+              class: 'list',
+              value: '其次忆吴宫',
+              event: '',
+              slotid: 'slotid1'
+              // ,slot: '<view class="kai-iconfont kai-icon-minus">slot2</view><view class="kai-iconfont kai-icon-plus">alot21</view>'
+            },
+            {
+              class: 'list',
+              value: '吴酒一杯春竹叶',
+              event: ''
+            },
+            {
+              class: 'list',
+              value: '吴娃双舞醉芙蓉',
+              event: ''
+            },
+            {
+              class: 'list',
+              value: '早晚复相逢',
+              event: ''
+            }],
+          top: true,
+          index: 0,
+          show: false
+        },
+        {
+          itemList: [{
+            class: 'bold list1',
+            value: '自定义',
+            event: ''
+          },
+            {
+              value: '拍摄',
+              event: ''
+            },
+            {
+              value: '从手机相册选择',
+              event: ''
+            }],
+          index: 1,
+          show: false
+        }
+      ]
     }
 
     computed = {
@@ -69,6 +134,12 @@
     }
 
     methods = {
+      showActionSheet (i) {
+        this.asData.map((r, i) => {
+          r.show = false
+        })
+        this.asData[i].show = true
+      },
       gotofriends(item) {
         let url = ''
         if (item.type == 'single') {
@@ -119,7 +190,21 @@
         wx.navigateTo({url: url})
       }
     }
-
+    hideActionsheet (i) {
+      this.asData[i].show = false
+    }
+    events = {
+      'action-sheet': function (i, index, close) {
+        console.log(i, index, close)
+        if (close === 'true') {
+          console.log('您选择了取消')
+        } else {
+          console.log(i, index)
+          console.log('哇哈哈哈哈')
+        }
+        this.hideActionsheet(i)
+      }
+    }
   }
 </script>
 

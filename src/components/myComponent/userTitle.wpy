@@ -1,0 +1,88 @@
+<template>
+  <view class="weui">
+      <view class="user_back text-center">
+          <view style="margin: auto;">
+            <image class="userinfo-avatar" src="{{ user.wechat.avatar}}" background-size="cover"
+                   @tap="gotofriends({{user}})"/>
+          </view>
+          <view class="font_32 white">
+            {{ user.name }}
+          </view>
+      </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class userTitle extends wepy.component {
+    props = {
+      user: {
+        type: Object,
+        default: {}
+      }
+    }
+    data = {
+    }
+    components = {
+    }
+    onLoad() {
+      console.log(this.user)
+    }
+    methods = {
+      gotofriends(item) {
+        let url = ''
+        if (item.type == 'single') {
+          url = '/pages/goods/information?id=' + item.id
+        } else {
+          url = '/pages/goods/introducer?id=' + item.id
+        }
+        wx.navigateTo({url: url})
+      },
+      goto(url) {
+        wx.navigateTo({url: url})
+      },
+      gotoUser(type) {
+        let url = ''
+        if (type == 'single') {
+          url = '/pages/users/unmarri'
+        } else {
+          url = '/pages/users/intro'
+        }
+        wx.navigateTo({url: url})
+      }
+    }
+  }
+</script>
+
+<style type="less">
+@import "../../styles/custom/reset.less";
+
+.weui{
+  @userinfoHeight: 120rpx;
+  @userinfoSpace: 8rpx;
+  .user_back{
+    background: #005b9e;
+    padding: 68rpx;
+    /*background-image: url("http://local-pictures.img-cn-shenzhen.aliyuncs.com/201806/11/wx53cf66d72649eb5a.o6zAJs2lf_SH4K2plnWTlsSfhR70.9TmBzGGHW7w9470132e3efb72f0a1c8c06768b4cbd80.png");*/
+    /*background-size: cover;*/
+    /*position: relative;*/
+  }
+  .userinfo{
+    /*padding: 20rpx 0;*/
+    /*padding-top: 68rpx;*/
+    /*position: relative;*/
+    /*left: 0;*/
+    /*bottom: -26rpx;*/
+  }
+  .userinfo-avatar {
+    border:4rpx solid #ffffff;
+    /*float: left;*/
+    width: @userinfoHeight;
+    height: @userinfoHeight;
+    border-radius: 50%;
+    box-shadow: 1rpx 1rpx 12rpx #f4f4f4;
+  }
+}
+
+</style>

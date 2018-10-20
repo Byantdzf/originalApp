@@ -11,8 +11,8 @@
 function GoogleAnalytics(app) {
     this.app = app; // 小程序App实例
     this.systemInfo = wx.getSystemInfoSync();
-    this.trackers = ['UA-109097480-11']; // 可以有多个跟踪器，第一个为默认跟踪器
-    this.appName = '名片';
+    this.trackers = ['UA-127752901-1']; // 可以有多个跟踪器，第一个为默认跟踪器
+    this.appName = '我的小程序';
     this.appVersion = 'ver';
 
     // console.log(this.systemInfo);

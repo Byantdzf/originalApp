@@ -1,0 +1,230 @@
+<template>
+  <!--<view>保存在手机</view>-->
+  <!--<input type="text">-->
+  <!--<view @tap="addIphone">添加到通讯录</view>-->
+  <view class="kai-content">
+    <!--<view class="padding-10 font-12">基础样式：</view>-->
+    <searchbar
+      placeholder="文艺复古长裙"
+      focus="true"
+      @bindsearch.user="searchEvent"
+      @bindcancel.user="cancelEvent"
+    />
+    <view wx:for="{{list}}" wx:key="index" class="ff vessel">
+      <view class="vessel_image">
+        <image src="{{item.avatar}}" mode="aspectFit" class="avatar"></image>
+      </view>
+      <view class="vessel_text color666">
+        <view class="bold">{{item.nickname}}</view>
+        <view class="font_28 ellipsis_1">{{item.unionid}}</view>
+        <view class="font_28 ellipsis_1">{{item.avatar}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import user from '../../mixins/user'
+  import ShareMessage from '../../mixins/ShareMessage'
+  import {service} from '../../config.js'
+  import Searchbar from '@/components/searchbar/index'
+
+  export default class addressBook extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '名片',
+      enablePullDownRefresh: true
+    }
+
+    components = {
+      searchbar: Searchbar
+    }
+    data = {
+      list: [],
+      phoneNum: '15707534403',
+      datasource: []
+    }
+
+    computed = {}
+
+    onShow() {
+      // 初始化页面数据
+      this.initData()
+      this.$parent.getTracker(this.$root.$name, this.config.navigationBarTitleText)
+    }
+
+    onShareAppMessage(res) {
+      return this.$parent.onShareAppMessage(this.config.navigationBarTitleText)
+    }
+
+    onLoad() {
+      // 复制
+//      wx.setClipboardData({
+//        data: 'data',
+//        success: function(res) {
+//          wx.getClipboardData({
+//            success: function(res) {
+//              console.log(res.data) // data
+//            }
+//          })
+//        }
+//      }) // 粘贴
+//      wx.getClipboardData({
+//        success: function(res){
+//          console.log(res.data)
+//        }
+//      })
+    }
+
+    onPullDownRefresh() {
+//      this.initPageData()
+    }
+
+    // 初始化页面数据
+    initData() {
+      let url = 'https://www.easy-mock.com/mock/5bcaa938e6742c1bf8220cc3/user/list'
+      this.$get({url: url}, {
+        success: ({code, data}) => {
+          this.list = data
+          this.$apply()
+        }
+      })
+    }
+
+    methods = {
+      searchEvent (value) {
+        console.log('搜索关键词：' + value)
+      },
+      cancelEvent () {
+        console.log('asd')
+        wx.navigateBack({
+          delta: 1
+        })
+      },
+      addIphone() {
+        var that = this;
+        // 提示呼叫号码还是将号码添加到手机通讯录
+        wx.showActionSheet({
+          itemList: ['呼叫', '添加联系人'],
+          success: function (res) {
+            if (res.tapIndex === 0) {
+              // 呼叫号码
+              wx.makePhoneCall({
+                phoneNumber: that.phoneNum,
+              })
+            } else if (res.tapIndex == 1) {
+              // 添加到手机通讯录
+              wx.addPhoneContact({
+                firstName: 'test',//联系人姓名
+                mobilePhoneNumber: that.phoneNum,//联系人手机号
+                success: () => {
+                  console.log('sdsd')
+                }
+              })
+            }
+          }
+        })
+      },
+      showActionSheet(i) {
+        this.asData.map((r, i) => {
+          r.show = false
+        })
+        this.asData[i].show = true
+      },
+      gotofriends(item) {
+        let url = ''
+        if (item.type == 'single') {
+          url = '/pages/goods/information?id=' + item.id
+        } else {
+          url = '/pages/goods/introducer?id=' + item.id
+        }
+        wx.navigateTo({url: url})
+      },
+      goto(url) {
+        wx.navigateTo({url: url})
+      },
+      gotoVipSet() {
+        let url = ''
+        if (user.rank_id == 0) {
+          return wx.showModal({
+            title: '提示',
+            content: '需要先成为VIP会员！',
+            confirmText: '去升级',
+            success: function (res) {
+              if (res.confirm) {
+//                wx.navigateTo({url: url})
+                wx.redirectTo({url: '/pages/users/upgradingVIP'})
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
+            }
+          })
+        }
+        if (user.is_profile == 0) {
+          if (user.type == 'single') {
+            url = '/pages/users/unmarri'
+          } else {
+            url = '/pages/users/intro'
+          }
+        } else {
+          url = '/pages/users/vipSetting'
+        }
+        wx.navigateTo({url: url})
+      },
+      gotoUser(type) {
+        let url = ''
+        if (type == 'single') {
+          url = '/pages/users/unmarri'
+        } else {
+          url = '/pages/users/intro'
+        }
+        wx.navigateTo({url: url})
+      }
+    }
+
+    hideActionsheet(i) {
+      this.asData[i].show = false
+    }
+
+    events = {
+      'action-sheet': function (i, index, close) {
+        console.log(i, index, close)
+        if (close === 'true') {
+          console.log('您选择了取消')
+        } else {
+          console.log(i, index)
+          console.log('哇哈哈哈哈')
+        }
+        this.hideActionsheet(i)
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  @import "../../styles/custom/reset.less";
+  page{
+    background: #ececec;
+    .vessel{
+      padding: 22rpx;
+      background: #f8f8f8;
+      border-bottom: 2px solid #f4f4f4;
+      .vessel_image{
+        width: 24%;
+        display: inline-block;
+        .avatar{
+          width: 150rpx;
+          height: 150rpx;
+        }
+      }
+      .vessel_text{
+        width: 74%;
+        display: inline-block;
+      }
+    }
+  }
+
+</style>

@@ -22,7 +22,9 @@ var HitBuilders = ga.HitBuilders
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/tabBar/index'
+      'pages/tabBar/index',
+      'pages/tabBar/user',
+      'pages/tabBar/addressBook'
       ],
     'subPackages':[
       {
@@ -64,6 +66,7 @@ export default class extends wepy.app {
     ],
     window: {
       backgroundTextStyle: 'light',
+//      navigationStyle: 'custom',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
@@ -85,12 +88,12 @@ export default class extends wepy.app {
         iconPath: './images/tabbars/circle.png',
         text: '名片库'
       }, {
-        pagePath: 'pages/tabBar/index',
+        pagePath: 'pages/tabBar/addressBook',
         selectedIconPath: './images/tabbars/circle_active.png',
         iconPath: './images/tabbars/circle.png',
         text: '通讯录'
       }, {
-        pagePath: 'pages/tabBar/index',
+        pagePath: 'pages/tabBar/user',
         selectedIconPath: './images/tabbars/circle_active.png',
         iconPath: './images/tabbars/circle.png',
         text: '我的'
@@ -133,9 +136,9 @@ export default class extends wepy.app {
     if (!this.globalData.tracker) {
       // 初始化GoogleAnalytics Tracker
       this.globalData.tracker = GoogleAnalytics.getInstance(this)
-        .setAppName('福邦商圈')
+        .setAppName('我的小程序')
         .setAppVersion('v0.1')
-        .newTracker('UA-109097480-11')
+        .newTracker('UA-127752901-1')
     }
     var t = this.globalData.tracker
     t.setScreenName(text)

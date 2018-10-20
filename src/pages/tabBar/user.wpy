@@ -1,0 +1,211 @@
+<template>
+  <view>
+    <userTitle :user.sync="user"></userTitle>
+    <!--<view class="ff">-->
+      <!--<repeat for="{{cellData}}" index="i" item="item" key="row-{{index}}">-->
+        <!--&lt;!&ndash;<cell :title.sync="item.title" :item="item" custom-class="cell-class"  :detail="item.subtitle" :arrow="item.arrow" :access="item.access"></cell>&ndash;&gt;-->
+        <!--<cell :detail="item.subtitle"  :item="item" :arrow="item.arrow" :access="item.access">-->
+          <!--<view slot="title">-->
+            <!--&lt;!&ndash;<icon type="comment" class="icon"/>&ndash;&gt;-->
+            <!--<image  class="icon" mode="aspectFit" src="https://wx.qlogo.cn/mmopen/vi_32/cmGSXMcPDVlrm0SH5Dd8UEATibQy40iaAR9ATibBI9JpnWh6ia14quRDwd7jiaABA1AaiblFnv0ZCGMECRFVDqyLQv7A/132"></image>-->
+            <!--<view class="title-new">{{item.title}}</view>-->
+          <!--</view>-->
+        <!--</cell>-->
+      <!--</repeat>-->
+    <!--</view>-->
+    <!--<view style="margin-top: 22rpx;">-->
+      <!--<view class="cell-list ff">-->
+        <!--<image  class="icon" mode="aspectFit" src="https://wx.qlogo.cn/mmopen/vi_32/cmGSXMcPDVlrm0SH5Dd8UEATibQy40iaAR9ATibBI9JpnWh6ia14quRDwd7jiaABA1AaiblFnv0ZCGMECRFVDqyLQv7A/132"></image>-->
+        <!--<view class="title-new">意见反馈</view>-->
+      <!--</view>-->
+      <!--<view class="cell-list ff">-->
+        <!--<image  class="icon" mode="aspectFit" src="https://wx.qlogo.cn/mmopen/vi_32/cmGSXMcPDVlrm0SH5Dd8UEATibQy40iaAR9ATibBI9JpnWh6ia14quRDwd7jiaABA1AaiblFnv0ZCGMECRFVDqyLQv7A/132"></image>-->
+        <!--<view class="title-new">分享给好友</view>-->
+      <!--</view>-->
+    <!--</view>-->
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import user from '../../mixins/user'
+  import ShareMessage from '../../mixins/ShareMessage'
+  import { service } from '../../config.js'
+  import userTitle from '../../components/myComponent/userTitle'
+  import cell from '@/components/cell/index'
+  import icon from '@/components/icon/index'
+
+  export default class Pageuser extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '我的',
+      enablePullDownRefresh: true
+    }
+
+    components = {
+      userTitle,
+      cell,
+      icon
+    }
+    data = {
+      user: {},
+      arrow: true,
+      cellData:[
+        {
+          title: '系统通知',
+          subtitle: '自定义内容',
+          arrow: false,
+          access: true,
+          link: '/pages/components/index'
+        },
+        {
+          title: '我的积分',
+          subtitle: '自定义内容',
+          arrow: false,
+          access: true,
+          link: '/pages/components/index'
+        },
+        {
+          title: '我的通讯录',
+          subtitle: '自定义内容',
+          arrow: false,
+          access: true,
+          link: '/pages/components/index'
+        },
+        {
+          title: '我的邀请',
+          subtitle: '自定义内容',
+          arrow: false,
+          access: true,
+          link: '/pages/components/index'
+        }
+      ]
+    }
+
+    computed = {
+      nickName() {
+        return (user && user.wechat && user.wechat.nickname) ? user.wechat.nickname : '未授权用户'
+      }
+    }
+
+    onShow() {
+      // 初始化页面数据
+      this.initData()
+      this.$parent.getTracker(this.$root.$name, this.config.navigationBarTitleText)
+    }
+
+    onShareAppMessage(res) {
+      return this.$parent.onShareAppMessage(this.config.navigationBarTitleText)
+    }
+
+    onLoad() {
+
+    }
+    onReachBottom(){
+      this.initData()
+    }
+
+    onPullDownRefresh() {
+      this.initData()
+    }
+
+    // 初始化页面数据
+    initData() {
+      let url = 'https://www.easy-mock.com/mock/5bcaa938e6742c1bf8220cc3/user/user'
+      this.$get({url: url}, {
+        success: ({code, data}) => {
+          this.user = data
+          this.$apply()
+        }
+      })
+    }
+
+    methods = {
+      showActionSheet (i) {
+        this.asData.map((r, i) => {
+          r.show = false
+        })
+        this.asData[i].show = true
+      },
+      gotofriends(item) {
+        let url = ''
+        if (item.type == 'single') {
+          url = '/pages/goods/information?id=' + item.id
+        } else {
+          url = '/pages/goods/introducer?id=' + item.id
+        }
+        wx.navigateTo({url: url})
+      },
+      goto(url) {
+        debugger
+        wx.navigateTo({url: url})
+      },
+      gotoVipSet() {
+        let url = ''
+        if (user.rank_id == 0) {
+          return wx.showModal({
+            title: '提示',
+            content: '需要先成为VIP会员！',
+            confirmText: '去升级',
+            success: function(res) {
+              if (res.confirm) {
+//                wx.navigateTo({url: url})
+                wx.redirectTo({url: '/pages/users/upgradingVIP'})
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
+            }
+          })
+        }
+        if (user.is_profile == 0) {
+          if (user.type == 'single') {
+            url = '/pages/users/unmarri'
+          } else {
+            url = '/pages/users/intro'
+          }
+        } else {
+          url = '/pages/users/vipSetting'
+        }
+        wx.navigateTo({url: url})
+      },
+      gotoUser(type) {
+        let url = ''
+        if (type == 'single') {
+          url = '/pages/users/unmarri'
+        } else {
+          url = '/pages/users/intro'
+        }
+        wx.navigateTo({url: url})
+      }
+    }
+    hideActionsheet (i) {
+      this.asData[i].show = false
+    }
+    events = {
+      'item-tap': (item) => {
+        console.log(item)
+        wx.navigateTo({url: item.link})
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  @import "../../styles/custom/reset.less";
+  .icon{
+    display: inline-block;
+    margin-right: 5px;
+    width: 32rpx;
+    height: 32rpx;
+    margin-bottom: -4rpx;
+  }
+  .title-new{
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .title-text{
+    color: red;
+  }
+</style>
